@@ -3,3 +3,6 @@
 /web
 /macos
 /linux
+/.dart_tool
+/build
+/.idea
