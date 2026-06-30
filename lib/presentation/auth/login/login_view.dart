@@ -25,6 +25,8 @@ class LoginView extends GetView<LoginController> {
               _buildDivider(),
               const SizedBox(height: 24),
               _buildPhoneButton(),
+              const SizedBox(height: 12),
+              _buildGoogleButton(),
               const SizedBox(height: 32),
             ],
           ),
@@ -169,5 +171,14 @@ class LoginView extends GetView<LoginController> {
       icon: const Icon(Icons.phone_outlined),
       label: const Text('Continue with Phone Number'),
     );
+  }
+
+  Widget _buildGoogleButton() {
+    return Obx(() => OutlinedButton.icon(
+          onPressed:
+              controller.isLoading.value ? null : controller.signInWithGoogle,
+          icon: const Icon(Icons.g_mobiledata, size: 28),
+          label: const Text('Continue with Google'),
+        ));
   }
 }

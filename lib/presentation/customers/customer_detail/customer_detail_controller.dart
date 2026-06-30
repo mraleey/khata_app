@@ -37,14 +37,18 @@ class CustomerDetailController extends GetxController {
 
   void _listenToTransactions() {
     _txSub =
-        _txRepo.watchTransactions(uid, customer.customerId).listen((list) {
+        _txRepo.watchTransactions(customer.shopkeeperUid, customer.customerId).listen((list) {
       transactions.assignAll(list);
       isLoading.value = false;
     }, onError: (_) => isLoading.value = false);
   }
 
   void _listenToCustomerBalance() {
-    _customerSub = _customerRepo.watchCustomers(uid).listen((list) {
+    final stream = customer.shopkeeperUid == uid 
+      ? _customerRepo.watchCustomers(uid) 
+      : _customerRepo.watchSharedCustomers(_authRepo.currentUser?.email ?? '');
+
+    _customerSub = stream.listen((list) {
       final updated =
           list.where((c) => c.customerId == customer.customerId).firstOrNull;
       if (updated != null) currentBalance.value = updated.netBalance;
@@ -59,7 +63,7 @@ class CustomerDetailController extends GetxController {
     isDeletingTransaction.value = true;
     try {
       await _txRepo.deleteTransaction(
-        uid: uid,
+        uid: customer.shopkeeperUid,
         customerId: customer.customerId,
         transaction: tx,
       );

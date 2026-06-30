@@ -73,6 +73,31 @@ class LoginController extends GetxController {
 
   void goToPhoneAuth() => Get.toNamed(AppRoutes.PHONE_AUTH);
 
+  Future<void> signInWithGoogle() async {
+    isLoading.value = true;
+    try {
+      final credential = await _authRepo.signInWithGoogle();
+      if (credential != null && credential.user != null) {
+        final user = credential.user!;
+        await _authRepo.createOrUpdateUserRecord(user);
+        SessionManager.saveSession(
+          userId: user.uid,
+          keepLoggedIn: keepLoggedIn.value,
+        );
+        Get.offAllNamed(AppRoutes.DASHBOARD);
+      }
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+
+      _showError(_authErrorMessage(e.code));
+    } catch (e) {
+      print(e.toString());
+      _showError('Google sign in failed. Please try again.');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void _showError(String message) {
     Get.snackbar(
       'Error',

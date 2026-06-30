@@ -10,6 +10,7 @@ class AddCustomerController extends GetxController {
 
   final nameCtrl = TextEditingController();
   final phoneCtrl = TextEditingController();
+  final emailCtrl = TextEditingController();
   final balanceCtrl = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
@@ -32,10 +33,15 @@ class AddCustomerController extends GetxController {
     }
 
     try {
+      final user = _authRepo.currentUser;
+      final shopkeeperName = user?.displayName ?? user?.email ?? 'Unknown';
+
       await _customerRepo.addCustomer(
         uid: uid,
         name: nameCtrl.text,
+        shopkeeperName: shopkeeperName,
         phone: phoneCtrl.text.isEmpty ? null : phoneCtrl.text,
+        email: emailCtrl.text.isEmpty ? null : emailCtrl.text,
         initialBalance: initialBalance,
       );
       Get.back();
@@ -67,6 +73,7 @@ class AddCustomerController extends GetxController {
   void onClose() {
     nameCtrl.dispose();
     phoneCtrl.dispose();
+    emailCtrl.dispose();
     balanceCtrl.dispose();
     super.onClose();
   }

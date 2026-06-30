@@ -11,20 +11,34 @@ class DashboardController extends GetxController {
   final AuthRepository _authRepo = Get.find<AuthRepository>();
   final CustomerRepository _customerRepo = Get.find<CustomerRepository>();
 
-  final customers = <CustomerModel>[].obs;
+  final myCustomers = <CustomerModel>[].obs;
+  final sharedCustomers = <CustomerModel>[].obs;
   final filteredCustomers = <CustomerModel>[].obs;
   final isLoading = true.obs;
   final searchQuery = ''.obs;
 
   StreamSubscription<List<CustomerModel>>? _customerSub;
+  StreamSubscription<List<CustomerModel>>? _sharedCustomerSub;
+
+  List<CustomerModel> get customers {
+    final list = [...myCustomers, ...sharedCustomers];
+    list.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return list;
+  }
 
   String get uid => _authRepo.currentUid ?? '';
 
-  double get totalCashIn => customers.fold(
-      0, (sum, c) => c.netBalance > 0 ? sum + c.netBalance : sum);
+  double get totalCashIn => customers.fold(0, (sum, c) {
+        final isOwner = c.shopkeeperUid == uid;
+        final effectiveBalance = isOwner ? c.netBalance : -c.netBalance;
+        return effectiveBalance > 0 ? sum + effectiveBalance : sum;
+      });
 
-  double get totalCashOut => customers.fold(
-      0, (sum, c) => c.netBalance < 0 ? sum + c.netBalance.abs() : sum);
+  double get totalCashOut => customers.fold(0, (sum, c) {
+        final isOwner = c.shopkeeperUid == uid;
+        final effectiveBalance = isOwner ? c.netBalance : -c.netBalance;
+        return effectiveBalance < 0 ? sum + effectiveBalance.abs() : sum;
+      });
 
   double get netTotal => totalCashIn - totalCashOut;
 
@@ -34,17 +48,27 @@ class DashboardController extends GetxController {
     _listenToCustomers();
     debounce(searchQuery, (_) => _filterCustomers(),
         time: const Duration(milliseconds: 300));
-    ever(customers, (_) => _filterCustomers());
+    ever(myCustomers, (_) => _filterCustomers());
+    ever(sharedCustomers, (_) => _filterCustomers());
   }
 
   void _listenToCustomers() {
     _customerSub = _customerRepo.watchCustomers(uid).listen(
       (list) {
-        customers.assignAll(list);
+        myCustomers.assignAll(list);
         isLoading.value = false;
       },
       onError: (_) => isLoading.value = false,
     );
+
+    final email = _authRepo.currentUser?.email ?? '';
+    if (email.isNotEmpty) {
+      _sharedCustomerSub = _customerRepo.watchSharedCustomers(email).listen(
+        (list) {
+          sharedCustomers.assignAll(list);
+        },
+      );
+    }
   }
 
   void _filterCustomers() {
@@ -75,6 +99,7 @@ class DashboardController extends GetxController {
   @override
   void onClose() {
     _customerSub?.cancel();
+    _sharedCustomerSub?.cancel();
     super.onClose();
   }
 }

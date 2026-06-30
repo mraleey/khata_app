@@ -57,7 +57,10 @@ class CustomerDetailView extends GetView<CustomerDetailController> {
         children: [
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: () => controller.goToAddTransaction(TransactionType.cashIn),
+              onPressed: () => controller.goToAddTransaction(
+                  controller.customer.shopkeeperUid == controller.uid 
+                      ? TransactionType.cashIn 
+                      : TransactionType.cashOut),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.cashIn,
                 minimumSize: const Size(0, 46),
@@ -72,7 +75,10 @@ class CustomerDetailView extends GetView<CustomerDetailController> {
           const SizedBox(width: 12),
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: () => controller.goToAddTransaction(TransactionType.cashOut),
+              onPressed: () => controller.goToAddTransaction(
+                  controller.customer.shopkeeperUid == controller.uid 
+                      ? TransactionType.cashOut 
+                      : TransactionType.cashIn),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.cashOut,
                 minimumSize: const Size(0, 46),
@@ -161,7 +167,11 @@ class _BalanceHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPositive = balance >= 0;
+    final controller = Get.find<CustomerDetailController>();
+    final isOwner = controller.customer.shopkeeperUid == controller.uid;
+    final effectiveBalance = isOwner ? balance : -balance;
+
+    final isPositive = effectiveBalance >= 0;
     final color = isPositive ? AppTheme.cashIn : AppTheme.cashOut;
     final label = isPositive ? 'Will Get' : 'Will Give';
     final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 2);
@@ -175,7 +185,7 @@ class _BalanceHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            fmt.format(balance.abs()),
+            fmt.format(effectiveBalance.abs()),
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.w800,
@@ -213,7 +223,11 @@ class _TransactionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
     final dateFmt = DateFormat('d MMM yyyy  h:mm a');
-    final isCashIn = transaction.isCashIn;
+    
+    final controller = Get.find<CustomerDetailController>();
+    final isOwner = controller.customer.shopkeeperUid == controller.uid;
+    final isCashIn = isOwner ? transaction.isCashIn : !transaction.isCashIn;
+
     final color = isCashIn ? AppTheme.cashIn : AppTheme.cashOut;
     final bgColor = isCashIn ? AppTheme.cashInLight : AppTheme.cashOutLight;
 

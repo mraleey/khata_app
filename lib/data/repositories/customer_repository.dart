@@ -13,10 +13,24 @@ class CustomerRepository {
             .toList());
   }
 
+  Stream<List<CustomerModel>> watchSharedCustomers(String email) {
+    if (email.trim().isEmpty) return Stream.value([]);
+    return FirebaseService.firestore
+        .collectionGroup('customers')
+        .where('email', isEqualTo: email.trim())
+        .orderBy('updatedAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => CustomerModel.fromSnapshot(doc))
+            .toList());
+  }
+
   Future<void> addCustomer({
     required String uid,
     required String name,
+    required String shopkeeperName,
     String? phone,
+    String? email,
     double initialBalance = 0,
   }) async {
     final colRef = FirebaseService.customersCol(uid);
@@ -30,6 +44,9 @@ class CustomerRepository {
     batch.set(customerRef, {
       'name': name.trim(),
       'phone': phone?.trim(),
+      'email': email?.trim(),
+      'shopkeeperUid': uid,
+      'shopkeeperName': shopkeeperName,
       'netBalance': initialBalance,
       'updatedAt': Timestamp.fromDate(now),
     });

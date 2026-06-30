@@ -42,6 +42,16 @@ class AddCustomerView extends GetView<AddCustomerController> {
                   prefixIcon: Icon(Icons.phone_outlined),
                 ),
               ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: controller.emailCtrl,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Customer Email (Optional)',
+                  hintText: 'Required to share Khata',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+              ),
               const SizedBox(height: 28),
               _sectionLabel('Opening Balance (Optional)'),
               const SizedBox(height: 8),

@@ -12,7 +12,20 @@
           "package_name": "com.example.khata_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "311937685864-kar4dvebg7hqfkaqn6himbhfameafkel.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.khata_app",
+            "certificate_hash": "b90f94d245bb1d4ecada55c1a11fae966c044765"
+          }
+        },
+        {
+          "client_id": "311937685864-3bbeo6fpnopphsu9dugko139ij9o4d5r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAbFGW6mFDzeeh4v97jCNu_PogHm9HAQ3g"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "311937685864-3bbeo6fpnopphsu9dugko139ij9o4d5r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "311937685864-ot74andb34bu9qjpbnvjq1t64tprduc3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.khataApp"
+              }
+            }
+          ]
         }
       }
     }

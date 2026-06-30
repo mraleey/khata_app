@@ -4,6 +4,9 @@ class CustomerModel {
   final String customerId;
   final String name;
   final String? phone;
+  final String? email;
+  final String shopkeeperUid;
+  final String shopkeeperName;
   final double netBalance; // positive = they owe you (cash in), negative = you owe them (cash out)
   final DateTime updatedAt;
 
@@ -11,6 +14,9 @@ class CustomerModel {
     required this.customerId,
     required this.name,
     this.phone,
+    this.email,
+    required this.shopkeeperUid,
+    required this.shopkeeperName,
     required this.netBalance,
     required this.updatedAt,
   });
@@ -20,6 +26,9 @@ class CustomerModel {
       customerId: id,
       name: map['name'] as String,
       phone: map['phone'] as String?,
+      email: map['email'] as String?,
+      shopkeeperUid: map['shopkeeperUid'] as String? ?? '',
+      shopkeeperName: map['shopkeeperName'] as String? ?? 'Unknown',
       netBalance: (map['netBalance'] as num).toDouble(),
       updatedAt: (map['updatedAt'] as Timestamp).toDate(),
     );
@@ -34,6 +43,9 @@ class CustomerModel {
     return {
       'name': name,
       'phone': phone,
+      'email': email,
+      'shopkeeperUid': shopkeeperUid,
+      'shopkeeperName': shopkeeperName,
       'netBalance': netBalance,
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
@@ -43,6 +55,9 @@ class CustomerModel {
     String? customerId,
     String? name,
     String? phone,
+    String? email,
+    String? shopkeeperUid,
+    String? shopkeeperName,
     double? netBalance,
     DateTime? updatedAt,
   }) {
@@ -50,6 +65,9 @@ class CustomerModel {
       customerId: customerId ?? this.customerId,
       name: name ?? this.name,
       phone: phone ?? this.phone,
+      email: email ?? this.email,
+      shopkeeperUid: shopkeeperUid ?? this.shopkeeperUid,
+      shopkeeperName: shopkeeperName ?? this.shopkeeperName,
       netBalance: netBalance ?? this.netBalance,
       updatedAt: updatedAt ?? this.updatedAt,
     );

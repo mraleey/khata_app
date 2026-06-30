@@ -235,7 +235,9 @@ class _CustomerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DashboardController>();
-    final isPositive = customer.netBalance >= 0;
+    final isOwner = customer.shopkeeperUid == controller.uid;
+    final effectiveBalance = isOwner ? customer.netBalance : -customer.netBalance;
+    final isPositive = effectiveBalance >= 0;
     final color = isPositive ? AppTheme.cashIn : AppTheme.cashOut;
     final bgColor = isPositive ? AppTheme.cashInLight : AppTheme.cashOutLight;
     final label = isPositive ? 'Will Get' : 'Will Give';
@@ -276,7 +278,14 @@ class _CustomerCard extends StatelessWidget {
                         fontSize: 15,
                         color: AppTheme.textPrimary),
                   ),
-                  if (customer.phone != null && customer.phone!.isNotEmpty) ...[
+                  if (!isOwner) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      'Khata with ${customer.shopkeeperName}',
+                      style: const TextStyle(
+                          fontSize: 12, color: AppTheme.textSecondary, fontStyle: FontStyle.italic),
+                    ),
+                  ] else if (customer.phone != null && customer.phone!.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
                       customer.phone!,
