@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "311937685864",
+    "project_id": "digital-khata-e8c66",
+    "storage_bucket": "digital-khata-e8c66.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311937685864:android:0e880585ef93b5e3149edd",
+        "android_client_info": {
+          "package_name": "com.example.khata_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbFGW6mFDzeeh4v97jCNu_PogHm9HAQ3g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
