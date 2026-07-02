@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Brand Colors
-  static const Color primary = Color(0xFF1A56DB);
-  static const Color primaryDark = Color(0xFF1347C0);
-  static const Color cashIn = Color(0xFF0E9F6E);      // Green - money received
+  static const Color primary = Color(0xFF588157);
+  static const Color primaryDark = Color(0xFF264653);
+  static const Color cashIn = Color(0xFF089A8C);      // Green - money received
   static const Color cashOut = Color(0xFFE02424);     // Red - money given
   static const Color cashInLight = Color(0xFFDEF7EC);
   static const Color cashOutLight = Color(0xFFFDE8E8);

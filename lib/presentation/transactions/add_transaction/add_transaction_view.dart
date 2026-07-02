@@ -68,7 +68,8 @@ class AddTransactionView extends GetView<AddTransactionController> {
             color: AppTheme.cashOut,
             isSelected:
                 controller.selectedType.value == TransactionType.cashOut,
-            onTap: () => controller.selectedType.value = TransactionType.cashOut,
+            onTap: () =>
+                controller.selectedType.value = TransactionType.cashOut,
           ),
         ],
       ),
@@ -86,7 +87,7 @@ class AddTransactionView extends GetView<AddTransactionController> {
       style: TextStyle(
           fontSize: 24, fontWeight: FontWeight.w700, color: accentColor),
       decoration: InputDecoration(
-        labelText: 'Amount (₹)',
+        labelText: 'Amount (RS)',
         prefixIcon: Icon(Icons.currency_rupee, color: accentColor),
         labelStyle: TextStyle(color: accentColor),
         focusedBorder: OutlineInputBorder(
@@ -139,11 +140,12 @@ class AddTransactionView extends GetView<AddTransactionController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Date',
-                    style: TextStyle(
-                        fontSize: 12, color: AppTheme.textSecondary)),
+                    style:
+                        TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
                 const SizedBox(height: 2),
                 Obx(() => Text(
-                      DateFormat('EEEE, d MMMM yyyy').format(controller.selectedDate.value),
+                      DateFormat('EEEE, d MMMM yyyy')
+                          .format(controller.selectedDate.value),
                       style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -161,7 +163,8 @@ class AddTransactionView extends GetView<AddTransactionController> {
 
   Widget _buildSaveButton(bool isCashIn, Color accentColor) {
     return Obx(() => ElevatedButton.icon(
-          onPressed: controller.isLoading.value ? null : controller.saveTransaction,
+          onPressed:
+              controller.isLoading.value ? null : controller.saveTransaction,
           style: ElevatedButton.styleFrom(backgroundColor: accentColor),
           icon: controller.isLoading.value
               ? const SizedBox(

@@ -27,7 +27,7 @@ class CustomerDetailView extends GetView<CustomerDetailController> {
       pinned: true,
       backgroundColor: AppTheme.primary,
       foregroundColor: Colors.white,
-      title: Text(controller.customer.name),
+      title: Text(''),
       flexibleSpace: FlexibleSpaceBar(
         background: Obx(() => _BalanceHeader(
               name: controller.customer.name,
@@ -140,7 +140,7 @@ class CustomerDetailView extends GetView<CustomerDetailController> {
   }
 
   void _confirmDelete(TransactionModel tx) {
-    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: 'RS ', decimalDigits: 0);
     Get.defaultDialog(
       title: 'Delete Transaction',
       middleText:
@@ -163,7 +163,12 @@ class CustomerDetailView extends GetView<CustomerDetailController> {
 class _BalanceHeader extends StatelessWidget {
   final String name;
   final double balance;
-  const _BalanceHeader({required this.name, required this.balance});
+
+  const _BalanceHeader({
+    super.key,
+    required this.name,
+    required this.balance,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -173,36 +178,105 @@ class _BalanceHeader extends StatelessWidget {
 
     final isPositive = effectiveBalance >= 0;
     final color = isPositive ? AppTheme.cashIn : AppTheme.cashOut;
-    final label = isPositive ? 'Will Get' : 'Will Give';
-    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 2);
+    final label = isPositive ? 'Will Receive' : 'Will Give';
 
-    return Container(
-      alignment: Alignment.bottomLeft,
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      decoration: const BoxDecoration(color: AppTheme.primary),
+    final fmt = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: 'RS ',
+      decimalDigits: 2,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            fmt.format(effectiveBalance.abs()),
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 4),
+          // Customer Name
+
+
+          const SizedBox(height: 24),
+
+          // Balance Container (only this has background & styling)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 28),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.07),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-            child: Text(
-              label,
-              style: TextStyle(
-                  color: color, fontWeight: FontWeight.w600, fontSize: 13),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Amount
+                Text(
+                  name,
+                  style:  const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.primary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  fmt.format(effectiveBalance.abs()),
+                  style: TextStyle(
+                    fontSize: 44,
+                    fontWeight: FontWeight.w800,
+                    color: color,
+                    height: 1.05,
+                    letterSpacing: -1.2,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+
+                // Status Chip
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: color.withOpacity(0.18),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isPositive
+                            ? Icons.arrow_downward_rounded
+                            : Icons.arrow_upward_rounded,
+                        size: 17,
+                        color: color,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: color,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -210,7 +284,6 @@ class _BalanceHeader extends StatelessWidget {
     );
   }
 }
-
 // ── Transaction Tile ──────────────────────────────────────────────────────────
 
 class _TransactionTile extends StatelessWidget {
@@ -221,7 +294,7 @@ class _TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: 'RS ', decimalDigits: 0);
     final dateFmt = DateFormat('d MMM yyyy  h:mm a');
     
     final controller = Get.find<CustomerDetailController>();
@@ -235,16 +308,16 @@ class _TransactionTile extends StatelessWidget {
       key: ValueKey(transaction.transactionId),
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
-        extentRatio: 0.22,
+        extentRatio: 0.01,
         children: [
-          SlidableAction(
-            onPressed: (_) => onDelete(),
-            backgroundColor: AppTheme.cashOut,
-            foregroundColor: Colors.white,
-            icon: Icons.delete_outline,
-            label: 'Delete',
-            borderRadius: const BorderRadius.horizontal(right: Radius.circular(12)),
-          ),
+          // SlidableAction(
+          //   onPressed: (_) => onDelete(),
+          //   backgroundColor: AppTheme.cashOut,
+          //   foregroundColor: Colors.white,
+          //   icon: Icons.delete_outline,
+          //   label: 'Delete',
+          //   borderRadius: const BorderRadius.horizontal(right: Radius.circular(12)),
+          // ),
         ],
       ),
       child: Container(

@@ -71,11 +71,10 @@ class AddTransactionController extends GetxController {
       Get.back();
       Get.snackbar(
         'Transaction Saved',
-        '${isCashIn ? "Cash In" : "Cash Out"} of ₹${amount.toStringAsFixed(0)} recorded.',
+        '${isCashIn ? "Cash In" : "Cash Out"} of RS ${amount.toStringAsFixed(0)} recorded.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: isCashIn
-            ? const Color(0xFF0E9F6E)
-            : const Color(0xFFE02424),
+        backgroundColor:
+            isCashIn ? const Color(0xFF0E9F6E) : const Color(0xFFE02424),
         colorText: Colors.white,
         margin: const EdgeInsets.all(16),
         borderRadius: 12,

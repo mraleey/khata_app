@@ -179,11 +179,12 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+    final fmt =
+        NumberFormat.currency(locale: 'en_IN', symbol: 'RS ', decimalDigits: 0);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.12),
+        color: Colors.white.withOpacity(0.7),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withOpacity(0.2)),
       ),
@@ -203,9 +204,9 @@ class _SummaryCard extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(label,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white70,
+                        color: color,
                         fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis),
               ),
@@ -236,12 +237,14 @@ class _CustomerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<DashboardController>();
     final isOwner = customer.shopkeeperUid == controller.uid;
-    final effectiveBalance = isOwner ? customer.netBalance : -customer.netBalance;
+    final effectiveBalance =
+        isOwner ? customer.netBalance : -customer.netBalance;
     final isPositive = effectiveBalance >= 0;
     final color = isPositive ? AppTheme.cashIn : AppTheme.cashOut;
     final bgColor = isPositive ? AppTheme.cashInLight : AppTheme.cashOutLight;
     final label = isPositive ? 'Will Get' : 'Will Give';
-    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+    final fmt =
+        NumberFormat.currency(locale: 'en_IN', symbol: 'RS ', decimalDigits: 0);
 
     return GestureDetector(
       onTap: () => controller.goToCustomerDetail(customer),
@@ -283,9 +286,12 @@ class _CustomerCard extends StatelessWidget {
                     Text(
                       'Khata with ${customer.shopkeeperName}',
                       style: const TextStyle(
-                          fontSize: 12, color: AppTheme.textSecondary, fontStyle: FontStyle.italic),
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                          fontStyle: FontStyle.italic),
                     ),
-                  ] else if (customer.phone != null && customer.phone!.isNotEmpty) ...[
+                  ] else if (customer.phone != null &&
+                      customer.phone!.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
                       customer.phone!,
@@ -315,8 +321,7 @@ class _CustomerCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(label,
-                    style: TextStyle(fontSize: 11, color: color)),
+                Text(label, style: TextStyle(fontSize: 11, color: color)),
               ],
             ),
           ],

@@ -24,8 +24,6 @@ class LoginView extends GetView<LoginController> {
               const SizedBox(height: 24),
               _buildDivider(),
               const SizedBox(height: 24),
-              _buildPhoneButton(),
-              const SizedBox(height: 12),
               _buildGoogleButton(),
               const SizedBox(height: 32),
             ],
@@ -46,8 +44,7 @@ class LoginView extends GetView<LoginController> {
             color: AppTheme.primary,
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Icon(Icons.account_balance_wallet,
-              color: Colors.white, size: 30),
+          child: Image.asset('assets/images/khata_logo.png'),
         ),
         const SizedBox(height: 20),
         const Text(
@@ -139,19 +136,14 @@ class LoginView extends GetView<LoginController> {
                     : const Text('Sign In'),
               )),
           const SizedBox(height: 12),
-          Obx(() => OutlinedButton(
-                onPressed:
-                    controller.isLoading.value ? null : controller.signUpWithEmail,
-                child: const Text('Create New Account'),
-              )),
         ],
       ),
     );
   }
 
   Widget _buildDivider() {
-    return Row(
-      children: const [
+    return const Row(
+      children: [
         Expanded(child: Divider()),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
@@ -165,19 +157,11 @@ class LoginView extends GetView<LoginController> {
     );
   }
 
-  Widget _buildPhoneButton() {
-    return OutlinedButton.icon(
-      onPressed: controller.goToPhoneAuth,
-      icon: const Icon(Icons.phone_outlined),
-      label: const Text('Continue with Phone Number'),
-    );
-  }
-
   Widget _buildGoogleButton() {
     return Obx(() => OutlinedButton.icon(
           onPressed:
               controller.isLoading.value ? null : controller.signInWithGoogle,
-          icon: const Icon(Icons.g_mobiledata, size: 28),
+          icon: Image.asset('assets/images/google.png', width: 20, height: 20),
           label: const Text('Continue with Google'),
         ));
   }

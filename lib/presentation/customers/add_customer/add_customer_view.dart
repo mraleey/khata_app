@@ -90,18 +90,20 @@ class AddCustomerView extends GetView<AddCustomerController> {
               const SizedBox(height: 14),
               TextFormField(
                 controller: controller.balanceCtrl,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))
                 ],
                 decoration: const InputDecoration(
-                  labelText: 'Amount (₹)',
+                  labelText: 'Amount (RS)',
                   prefixIcon: Icon(Icons.currency_rupee),
                 ),
                 validator: (v) {
                   if (v == null || v.isEmpty) return null;
                   if (double.tryParse(v) == null) return 'Enter a valid amount';
-                  if (double.parse(v) <= 0) return 'Amount must be greater than 0';
+                  if (double.parse(v) <= 0)
+                    return 'Amount must be greater than 0';
                   return null;
                 },
               ),
