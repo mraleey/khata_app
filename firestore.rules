@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User documents - only owner can access
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId;
+
+      // Customer subcollection - dual access model
+      // Anchored under shopkeeper's UID, but customers can access via email match
+      match /customers/{customerId} {
+        // Shopkeeper (owner) has full access
+        allow read, write: if request.auth.uid == userId;
+
+        // Customer has read-only access if their email matches the customer.email field
+        allow read: if 
+          request.auth.token.email == resource.data.email &&
+          resource.data.email != null;
+        
+        // Customer can UPDATE customer balance and metadata when creating/deleting transactions
+        allow update: if 
+          request.auth.token.email == resource.data.email &&
+          request.auth.token.email != null &&
+          // Only allow updating balance and timestamp fields
+          request.resource.data.keys().hasAll(['netBalance', 'updatedAt']) &&
+          request.resource.data.size() == 2;
+
+        // Transactions subcollection - collaborative real-time ledger
+        match /transactions/{transactionId} {
+          // Shopkeeper (owner) can read, create, and manage
+          allow read, write: if request.auth.uid == userId;
+
+          // Customer can:
+          // - Read all transactions in this ledger (they have access to it)
+          // - Create new transactions (chat-like collaboration)
+          // - Update/Delete only their own transactions
+          allow read, create: if
+            request.auth.token.email == get(/databases/$(database)/documents/users/$(userId)/customers/$(customerId)).data.email &&
+            request.auth.token.email != null;
+
+          allow update, delete: if
+            request.auth.token.email == get(/databases/$(database)/documents/users/$(userId)/customers/$(customerId)).data.email &&
+            request.auth.token.email != null &&
+            resource.data.createdByUid == request.auth.uid;
+        }
+      }
+    }
+
+    // Allow customer discovery via collectionGroup query
+    // This enables: collectionGroup('customers').where('email', '==', userEmail)
+    match /{document=**}/customers/{customerId} {
+      // Allow queries to find customers by email (for customer login discovery)
+      allow read: if request.auth.token.email == resource.data.email;
+    }
+  }
+}

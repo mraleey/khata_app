@@ -61,7 +61,7 @@ class AddTransactionController extends GetxController {
     try {
       final amount = double.parse(amountCtrl.text.trim());
       await _txRepo.addTransaction(
-        uid: uid,
+        shopkeeperUid: customer.shopkeeperUid,
         customerId: customer.customerId,
         amount: amount,
         type: selectedType.value,
@@ -89,6 +89,7 @@ class AddTransactionController extends GetxController {
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
       );
+      print("Error saving transaction: $e");
     } finally {
       isLoading.value = false;
     }

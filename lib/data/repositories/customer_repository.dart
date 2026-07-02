@@ -1,30 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../models/customer_model.dart';
 import '../services/firebase_service.dart';
 
 class CustomerRepository {
-  Stream<List<CustomerModel>> watchCustomers(String uid) {
+
+  /// Stream for Shopkeeper App: Watches all local customer items
+  Stream<List<CustomerModel>> watchCustomersAsShopkeeper(String uid) {
     return FirebaseService.customersCol(uid)
         .orderBy('updatedAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => CustomerModel.fromSnapshot(doc))
-            .toList());
+        .map((doc) => CustomerModel.fromSnapshot(doc))
+        .toList());
   }
 
-  Stream<List<CustomerModel>> watchSharedCustomers(String email) {
-    if (email.trim().isEmpty) return Stream.value([]);
+  /// Stream for Customer App: Searches globally across all customer documents for matching email
+  Stream<List<CustomerModel>> watchCustomersAsCustomer(String email) {
+    final sanitizedEmail = email.trim().toLowerCase();
+    if (sanitizedEmail.isEmpty) return Stream.value([]);
+
     return FirebaseService.firestore
         .collectionGroup('customers')
-        .where('email', isEqualTo: email.trim())
-        .orderBy('updatedAt', descending: true)
+        .where('email', isEqualTo: sanitizedEmail)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => CustomerModel.fromSnapshot(doc))
-            .toList());
+        .map((snapshot) {
+      final customers = snapshot.docs
+          .map((doc) => CustomerModel.fromSnapshot(doc))
+          .toList();
+
+      // In-memory sorting avoids requiring complex Cloud Firestore multi-field indexes
+      customers.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      return customers;
+    });
   }
 
+  /// Atomically creates a customer and logs an opening balance transaction
   Future<void> addCustomer({
     required String uid,
     required String name,
@@ -33,18 +43,14 @@ class CustomerRepository {
     String? email,
     double initialBalance = 0,
   }) async {
-    final colRef = FirebaseService.customersCol(uid);
     final now = DateTime.now();
-
-    // If there's an initial balance, create both the customer and
-    // a matching opening transaction atomically.
     final batch = FirebaseService.firestore.batch();
+    final customerRef = FirebaseService.customersCol(uid).doc();
 
-    final customerRef = colRef.doc();
     batch.set(customerRef, {
       'name': name.trim(),
       'phone': phone?.trim(),
-      'email': email?.trim(),
+      'email': email?.trim().toLowerCase(),
       'shopkeeperUid': uid,
       'shopkeeperName': shopkeeperName,
       'netBalance': initialBalance,
@@ -64,26 +70,16 @@ class CustomerRepository {
     await batch.commit();
   }
 
-  Future<void> deleteCustomer(String uid, String customerId) async {
-    // Delete all transactions first, then the customer document.
-    final txSnapshot = await FirebaseService.transactionsCol(uid, customerId).get();
+  /// Cleans out all nested transactions before stripping the main customer document
+  Future<void> deleteCustomer(String shopkeeperUid, String customerId) async {
+    final txSnapshot = await FirebaseService.transactionsCol(shopkeeperUid, customerId).get();
     final batch = FirebaseService.firestore.batch();
+
     for (final doc in txSnapshot.docs) {
       batch.delete(doc.reference);
     }
-    batch.delete(FirebaseService.customerDoc(uid, customerId));
-    await batch.commit();
-  }
 
-  /// Called after every transaction to keep netBalance in sync.
-  Future<void> updateNetBalance({
-    required String uid,
-    required String customerId,
-    required double delta, // positive for cash-in, negative for cash-out
-  }) async {
-    await FirebaseService.customerDoc(uid, customerId).update({
-      'netBalance': FieldValue.increment(delta),
-      'updatedAt': Timestamp.now(),
-    });
+    batch.delete(FirebaseService.customerDoc(shopkeeperUid, customerId));
+    await batch.commit();
   }
 }

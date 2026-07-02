@@ -7,7 +7,6 @@ import '../services/firebase_service.dart';
 
 class AuthRepository {
   final FirebaseAuth _auth = FirebaseService.auth;
-  final FirebaseFirestore _firestore = FirebaseService.firestore;
   
   // ── FIX: Added the webClientId from your google-services.json ────────────────
   final GoogleSignIn _googleSignIn = GoogleSignIn(

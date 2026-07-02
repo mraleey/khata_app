@@ -53,7 +53,7 @@ class DashboardController extends GetxController {
   }
 
   void _listenToCustomers() {
-    _customerSub = _customerRepo.watchCustomers(uid).listen(
+    _customerSub = _customerRepo.watchCustomersAsShopkeeper(uid).listen(
       (list) {
         myCustomers.assignAll(list);
         isLoading.value = false;
@@ -63,7 +63,7 @@ class DashboardController extends GetxController {
 
     final email = _authRepo.currentUser?.email ?? '';
     if (email.isNotEmpty) {
-      _sharedCustomerSub = _customerRepo.watchSharedCustomers(email).listen(
+      _sharedCustomerSub = _customerRepo.watchCustomersAsCustomer(email).listen(
         (list) {
           sharedCustomers.assignAll(list);
         },

@@ -27,7 +27,7 @@ class CustomerDetailView extends GetView<CustomerDetailController> {
       pinned: true,
       backgroundColor: AppTheme.primary,
       foregroundColor: Colors.white,
-      title: Text(''),
+      title: const Text(''),
       flexibleSpace: FlexibleSpaceBar(
         background: Obx(() => _BalanceHeader(
               name: controller.customer.name,
@@ -165,7 +165,6 @@ class _BalanceHeader extends StatelessWidget {
   final double balance;
 
   const _BalanceHeader({
-    super.key,
     required this.name,
     required this.balance,
   });
@@ -306,8 +305,8 @@ class _TransactionTile extends StatelessWidget {
 
     return Slidable(
       key: ValueKey(transaction.transactionId),
-      endActionPane: ActionPane(
-        motion: const DrawerMotion(),
+      endActionPane: const ActionPane(
+        motion: DrawerMotion(),
         extentRatio: 0.01,
         children: [
           // SlidableAction(

@@ -102,8 +102,9 @@ class AddCustomerView extends GetView<AddCustomerController> {
                 validator: (v) {
                   if (v == null || v.isEmpty) return null;
                   if (double.tryParse(v) == null) return 'Enter a valid amount';
-                  if (double.parse(v) <= 0)
+                  if (double.parse(v) <= 0) {
                     return 'Amount must be greater than 0';
+                  }
                   return null;
                 },
               ),

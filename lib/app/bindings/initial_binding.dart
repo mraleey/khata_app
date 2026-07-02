@@ -14,7 +14,7 @@ class InitialBinding extends Bindings {
     Get.put<AuthRepository>(AuthRepository(), permanent: true);
     Get.put<CustomerRepository>(CustomerRepository(), permanent: true);
     Get.put<TransactionRepository>(
-      TransactionRepository(Get.find<CustomerRepository>()),
+      TransactionRepository(),
       permanent: true,
     );
   }

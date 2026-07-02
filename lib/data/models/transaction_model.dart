@@ -8,6 +8,11 @@ class TransactionModel {
   final TransactionType type;
   final String? remarks;
   final DateTime timestamp;
+  
+  // Creator metadata for chat-like ledger tracking
+  final String createdByUid;
+  final String createdByName;
+  final String createdByEmail;
 
   TransactionModel({
     required this.transactionId,
@@ -15,6 +20,9 @@ class TransactionModel {
     required this.type,
     this.remarks,
     required this.timestamp,
+    required this.createdByUid,
+    required this.createdByName,
+    required this.createdByEmail,
   });
 
   bool get isCashIn => type == TransactionType.cashIn;
@@ -28,6 +36,9 @@ class TransactionModel {
           : TransactionType.cashOut,
       remarks: map['remarks'] as String?,
       timestamp: (map['timestamp'] as Timestamp).toDate(),
+      createdByUid: map['createdByUid'] as String? ?? '',
+      createdByName: map['createdByName'] as String? ?? 'Unknown',
+      createdByEmail: map['createdByEmail'] as String? ?? '',
     );
   }
 
@@ -42,6 +53,9 @@ class TransactionModel {
       'type': type == TransactionType.cashIn ? 'in' : 'out',
       'remarks': remarks,
       'timestamp': Timestamp.fromDate(timestamp),
+      'createdByUid': createdByUid,
+      'createdByName': createdByName,
+      'createdByEmail': createdByEmail,
     };
   }
 }
